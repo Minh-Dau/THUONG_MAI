@@ -108,7 +108,6 @@ include 'config.php'; // Kết nối với database
                                 </div>
                                 QUẢN LÝ NGƯỜI DÙNG
                             </a>
-
                         </div>
                     </div>
                 </nav>
@@ -143,6 +142,7 @@ include 'config.php'; // Kết nối với database
                                         <th>Quyền</th>
                                         <th>Số điện thoại</th>
                                         <th>Địa chỉ</th>
+                                        <th>Trạng thái</th>
                                         <th>Hoạt động</th>
                                     </tr>
                                 </thead>
@@ -155,16 +155,15 @@ include 'config.php'; // Kết nối với database
                                         <th>Quyền</th>
                                         <th>Số điện thoại</th>
                                         <th>Địa chỉ</th>
+                                        <th>Trạng thái</th>
                                         <th>Hoạt động</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     <?php
                                     include 'config.php';
-
                                     $sql = "SELECT * FROM frm_dangky";
                                     $result = $conn->query($sql);
-
                                     if ($result->num_rows > 0) {
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<tr>";
@@ -175,6 +174,9 @@ include 'config.php'; // Kết nối với database
                                             echo "<td>" . $row["phanquyen"] . "</td>";
                                             echo "<td>" . $row["sdt"] . "</td>";
                                             echo "<td>" . $row["diachi"] . "</td>";
+                                            echo "<td>" . ($row["trangthai"] == "hoatdong" 
+                                                ? "<span style='color: green; font-size: 20px;'>&#x25CF;</span> Hoạt Động" 
+                                                : "<span style='color: red; font-size: 20px;'>&#x25CF;</span> Bị Khóa") . "</td>";
                                             echo "<td>
                                                     <button class='btn btn-warning btn-sm edit-btn'
                                                         data-id='" . $row["id"] . "'
@@ -184,6 +186,7 @@ include 'config.php'; // Kết nối với database
                                                         data-diachi='" . htmlspecialchars($row["diachi"]) . "'
                                                         data-phanquyen='" . htmlspecialchars($row["phanquyen"]) . "'
                                                         data-anh='" . htmlspecialchars($row["anh"]) . "'
+                                                        data-trangthai='" . htmlspecialchars($row["trangthai"]) . "'
                                                         data-bs-toggle='modal'
                                                         data-bs-target='#editUserModal'>
                                                         Sửa
@@ -214,90 +217,60 @@ include 'config.php'; // Kết nối với database
         <script src="js/datatables-simple-demo.js"></script>
         <!-- Modal Thêm người dùng -->
             <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <form action="them_nguoidung.php" method="POST" enctype="multipart/form-data">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="addUserModalLabel">Thêm người dùng mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="them_nguoidung.php" method="POST" enctype="multipart/form-data">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addUserModalLabel">Thêm người dùng mới</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Tên đăng nhập</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Mật khẩu</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phanquyen" class="form-label">Phân quyền</label>
+                                    <select class="form-select" id="phanquyen" name="phanquyen">
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="sdt" class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="sdt" name="sdt">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="diachi" class="form-label">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="diachi" name="diachi">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="anh" class="form-label">Ảnh đại diện</label>
+                                    <input type="file" class="form-control" id="anh" name="anh">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="trangthai" class="form-label">Trạng thái</label>
+                                    <select class="form-select" id="trangthai" name="trangthai">
+                                        <option value="hoatdong">Hoạt động</option>
+                                        <option value="bikhoa">Bị khóa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Tên đăng nhập</label>
-                        <input 
-                        type="text" 
-                        class="form-control" 
-                        id="username" 
-                        name="username" 
-                        required
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Mật khẩu</label>
-                        <input 
-                        type="password" 
-                        class="form-control" 
-                        id="password" 
-                        name="password" 
-                        required
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input 
-                        type="email" 
-                        class="form-control" 
-                        id="email" 
-                        name="email" 
-                        required
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="phanquyen" class="form-label">Phân quyền</label>
-                        <select 
-                        class="form-select" 
-                        id="phanquyen" 
-                        name="phanquyen"
-                        >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="sdt" class="form-label">Số điện thoại</label>
-                        <input 
-                        type="text" 
-                        class="form-control" 
-                        id="sdt" 
-                        name="sdt"
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="diachi" class="form-label">Địa chỉ</label>
-                        <input 
-                        type="text" 
-                        class="form-control" 
-                        id="diachi" 
-                        name="diachi"
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="anh" class="form-label">Ảnh đại diện</label>
-                        <input 
-                        type="file" 
-                        class="form-control" 
-                        id="anh" 
-                        name="anh"
-                        >
-                    </div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                    </div>
-                </form>
                 </div>
-            </div>
             </div>
         <!-- Modal Chỉnh Sửa Người Dùng -->
         <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -338,6 +311,13 @@ include 'config.php'; // Kết nối với database
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="edit-trangthai" class="form-label">Trạng thái</label>
+                    <select class="form-control" name="trangthai" id="edit-trangthai">
+                        <option value="hoatdong">Hoạt động</option>
+                        <option value="bikhoa">Bị Khóa</option>
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="edit-anh" class="form-label">Ảnh</label>
                     <br>
                     <img id="current-user-img" src="" width="50" height="50" style="margin-bottom: 10px;">
@@ -366,12 +346,12 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("edit-sdt").value = this.dataset.sdt;
       document.getElementById("edit-diachi").value = this.dataset.diachi;
       document.getElementById("edit-phanquyen").value = this.dataset.phanquyen;
+      document.getElementById("edit-trangthai").value = this.dataset.trangthai; // Load trạng thái
       document.getElementById("current-user-img").src = this.dataset.anh;
       document.getElementById("current-anh").value = this.dataset.anh;
     });
   });
 });
-
 </script>
 <!-- Bao gồm SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

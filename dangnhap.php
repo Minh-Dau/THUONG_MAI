@@ -9,40 +9,55 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
-    <?php
-        // phân quyền rồi
-        session_start();
-        include("config.php");
-        $error_message1 = "";
-        $error_message2 = "";
-        if (isset($_POST['dangnhap']) && $_POST['username'] != '' && $_POST['password'] != '') {
-            $taikhoan = $_POST['username'];
-            $password = $_POST['password'];
+<?php
+session_start();
+include("config.php");
 
-            $sql = "SELECT * FROM frm_dangky WHERE username='$taikhoan' LIMIT 1";
-            $result = mysqli_query($conn, $sql);
+$error_message1 = "";
+$error_message2 = "";
+$error_message3 = "";
 
-            if(mysqli_num_rows($result) > 0) {
-                $row = mysqli_fetch_assoc($result);
-                $hashed_password = $row['password'];
-                $phanquyen = $row['phanquyen'];
-                if (password_verify($password, $hashed_password)) {
-                    $_SESSION['username'] = $taikhoan;
-                    $_SESSION['phanquyen'] = $phanquyen; 
-                    if ($phanquyen == 'admin') {
-                        header("Location: quanlysanpham.php"); 
-                    } else {
-                        header("Location: trangchinh.php"); 
-                    }
-                    exit();
-                } else {
-                    $error_message1 = "Sai mật khẩu!";
-                }
+if (isset($_POST['dangnhap']) && !empty($_POST['username']) && !empty($_POST['password'])) {
+    $taikhoan = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Truy vấn kiểm tra tài khoản
+    $sql = "SELECT * FROM frm_dangky WHERE username=? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $taikhoan);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $hashed_password = $row['password'];
+        $phanquyen = $row['phanquyen'];
+        $trangthai = $row['trangthai']; // Lấy trạng thái tài khoản
+
+        if ($trangthai == "bikhoa") {
+            $error_message3 = "Tài khoản của bạn đã bị khóa!";
+        } elseif (password_verify($password, $hashed_password)) {
+            $_SESSION['username'] = $taikhoan;
+            $_SESSION['phanquyen'] = $phanquyen;
+
+            if ($phanquyen == 'admin') {
+                header("Location: quanlysanpham.php");
             } else {
-                $error_message2 = "Tài khoản không tồn tại!";
+                header("Location: trangchinh.php");
             }
+            exit();
+        } else {
+            $error_message1 = "Sai mật khẩu!";
         }
-    ?>
+    } else {
+        $error_message2 = "Tài khoản không tồn tại!";
+    }
+
+    $stmt->close();
+}
+$conn->close();
+?>
+
     <?php include 'header.php'; ?>
     <div class="welcome">
         <?php
@@ -65,6 +80,7 @@
                 <br>
                 <span id="thongbao" style="color: red;"><?php echo $error_message1; ?></span>
                 <span id="thongbao" style="color: red;"><?php echo $error_message2; ?></span>
+                <span id="thongbao" style="color: red;"><?php echo $error_message3; ?></span> <!-- Thêm dòng này -->
             <table class="hienthimatkhau">
                 <tr>
                     <td>

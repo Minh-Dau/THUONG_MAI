@@ -46,35 +46,32 @@
 
     <div class="wrapper">
         <div class="product">
-            <?php
+        <?php
                 include("config.php");
-                $sql = "SELECT * FROM sanpham LIMIT 4";
+                $sql = "SELECT * FROM sanpham WHERE trangthai = 'hienthi' LIMIT 4";
                 $result = mysqli_query($conn, $sql);
-                while ($row = mysqli_fetch_array($result)) {  
-            ?> 
-                <div class="product_item">
-                    <div class="product_top">
-                        <a href="chitietsanpham.php?id=<?= $row['id']?>" class="product_thumb">
-                            <img src="<?php echo $row['img']?>" alt="" width="250" height="250">
-                        </a>
-                        <a href="chitietsanpham.php?id=<?= $row['id']?>" class="buy_now">Mua ngay</a>
+                while ($row = mysqli_fetch_array($result)) {
+                ?> 
+                    <div class="product_item">
+                        <div class="product_top">
+                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_thumb">
+                                <img src="<?php echo $row['img'] ?>" alt="" width="250" height="250">
+                            </a>
+                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="buy_now">Mua ngay</a>
+                        </div>
+                        <div class="product_info">
+                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_cat"><?php echo $row['tensanpham'] ?></a>
+                            <div class="product_price"><?php echo $row['gia'] ?>$</div>
+                        </div>
                     </div>
-                    <div class="product_info">
-                        <a href="chitietsanpham.php?id=<?= $row['id']?>" class="product_cat"><?php echo $row['tensanpham']?></a>
-                        <div class="product_price"><?php echo $row['gia']?>$</div>
-                    </div>
-                </div>
-            <?php
-            } 
-            ?>
+                <?php 
+                } 
+                ?>
         </div>
     </div>
     <div class="product_all">
         <a href="shop.php">Xem tất cả</a>
     </div> 
-    <div class="support">
-        <p><i class="bi bi-telephone-fill"></i>  Hỗ trợ - Mua hàng: <span style="color: rgb(201, 0, 0);"><b>0122 112 211</b></span></p>
-    </div>
     <?php include 'footer.php' ?>
     <div>
         <hr>

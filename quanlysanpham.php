@@ -138,8 +138,11 @@ include 'config.php'; // Kết nối với database
                                             <th>Tên sản phẩm</th>
                                             <th>Ảnh</th>
                                             <th>Giá nhập</th>
-                                            <th>Giá </th>
+                                            <th>Giá bán</th>
+                                            <th>Số lượng</th>
+                                            <th>Loại</th>
                                             <th>Nội dung</th>
+                                            <th>Trạng thái</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -149,8 +152,11 @@ include 'config.php'; // Kết nối với database
                                             <th>Tên sản phẩm</th>
                                             <th>Ảnh</th>
                                             <th>Giá nhập</th>
-                                            <th>Giá </th>
+                                            <th>Giá bán</th>
+                                            <th>Số lượng</th>
+                                            <th>Loại</th>
                                             <th>Nội dung</th>
+                                            <th>Trạng thái</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </tfoot>
@@ -167,7 +173,12 @@ include 'config.php'; // Kết nối với database
                                                 echo "<td><img src='" . $row["img"] . "' width='50' height='50'></td>";
                                                 echo "<td>" . $row["gia_nhap"] . "</td>";
                                                 echo "<td>" . $row["gia"] . "</td>";
+                                                echo "<td>" . $row["soluong"] . "</td>";
+                                                echo "<td>" . $row["loaisanpham"] . "</td>";
                                                 echo "<td>" . $row["noidungsanpham"] . "</td>";
+                                                echo "<td>" . ($row["trangthai"] == "hienthi" 
+                                                ? "<span style='color: green; font-size: 20px;'>&#x25CF;</span> Hiển thị" 
+                                                : "<span style='color: red; font-size: 20px;'>&#x25CF;</span> Đang ẩn") . "</td>";                                            
                                                 echo "<td>
                                                         <button class='btn btn-warning btn-sm edit-btn' 
                                                             data-id='" . $row["id"] . "' 
@@ -175,7 +186,10 @@ include 'config.php'; // Kết nối với database
                                                             data-img='" . $row["img"] . "'
                                                             data-gia_nhap='" . $row["gia_nhap"] . "'
                                                             data-gia='" . $row["gia"] . "'
+                                                            data-soluong='" . $row["soluong"] . "'
+                                                            data-loaisanpham='" . $row["loaisanpham"] . "' 
                                                             data-noidungsanpham='" . $row["noidungsanpham"] . "'
+                                                            data-trangthai='" . $row["trangthai"] . "'
                                                             data-bs-toggle='modal' data-bs-target='#editModal'>
                                                             Sửa
                                                         </button>
@@ -197,44 +211,67 @@ include 'config.php'; // Kết nối với database
                     </div>
                 </main>
                <!-- Modal Thêm Sản Phẩm -->
-                <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="addProductForm" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="add-tensanpham" class="form-label">Tên sản phẩm</label>
+                                            <input type="text" class="form-control" name="tensanpham" id="add-tensanpham" required>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="add-gia_nhap" class="form-label">Giá nhập</label>
+                                                <input type="number" class="form-control" name="gia_nhap" id="add-gia_nhap" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="add-gia" class="form-label">Giá bán</label>
+                                                <input type="number" class="form-control" name="gia" id="add-gia" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="add-soluong" class="form-label">Số lượng</label>
+                                                <input type="number" class="form-control" name="soluong" id="add-soluong" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="add-loaisanpham" class="form-label">Loại sản phẩm</label>
+                                                <select class="form-control" name="loaisanpham" id="add-loaisanpham" required>
+                                                    <option value="Nón Snapback">Nón Snapback</option>
+                                                    <option value="Nón cao bồi">Nón cao bồi</option>
+                                                    <option value="Nón len">Nón len</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-noidungsanpham" class="form-label">Nội dung sản phẩm</label>
+                                            <textarea class="form-control" name="noidungsanpham" id="add-noidungsanpham" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-img" class="form-label">Chọn ảnh</label>
+                                            <input type="file" class="form-control" name="img" id="add-img" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-trangthai" class="form-label">Trạng thái</label>
+                                            <select class="form-control" name="trangthai" id="add-trangthai" required>
+                                                <option value="hienthi">Hiển thị</option>
+                                                <option value="an">Ẩn</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="submit" class="btn btn-primary">Thêm</button>
+                                    </div>
+                                </form>
                             </div>
-                            <form id="addProductForm" enctype="multipart/form-data">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="add-tensanpham" class="form-label">Tên sản phẩm</label>
-                                        <input type="text" class="form-control" name="tensanpham" id="add-tensanpham" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="add-gia_nhap" class="form-label">Giá nhập</label>
-                                        <input type="number" class="form-control" name="gia_nhap" id="add-gia_nhap" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="add-gia" class="form-label">Giá bán</label>
-                                        <input type="number" class="form-control" name="gia" id="add-gia" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="add-noidungsanpham" class="form-label">Nội dung sản phẩm</label>
-                                        <textarea class="form-control" name="noidungsanpham" id="add-noidungsanpham" required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="add-img" class="form-label">Chọn ảnh</label>
-                                        <input type="file" class="form-control" name="img" id="add-img" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button type="submit" class="btn btn-primary">Thêm</button>
-                                </div>
-                            </form>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -242,7 +279,6 @@ include 'config.php'; // Kết nối với database
         <script src="js/scripts.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
-        <!-- Modal Chỉnh Sửa Sản Phẩm -->
         <!-- Modal Chỉnh Sửa Sản Phẩm -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -254,12 +290,10 @@ include 'config.php'; // Kết nối với database
                     <form action="update_product.php" method="POST" enctype="multipart/form-data">
                         <div class="modal-body">
                             <input type="hidden" name="id" id="edit-id">
-                            
                             <div class="mb-3">
                                 <label for="edit-tensanpham" class="form-label">Tên sản phẩm</label>
                                 <input type="text" class="form-control" name="tensanpham" id="edit-tensanpham">
                             </div>
-
                             <div class="mb-3">
                                 <label for="edit-img" class="form-label">Hình ảnh hiện tại</label>
                                 <br>
@@ -268,18 +302,40 @@ include 'config.php'; // Kết nối với database
                                 <label for="edit-new-img" class="form-label mt-2">Chọn ảnh mới</label>
                                 <input type="file" class="form-control" name="new_img" id="edit-new-img">
                             </div>
-                            <div class="mb-3">
-                                <label for="edit-gia_nhap" class="form-label">Giá nhập</label>
-                                <input type="number" class="form-control" name="gia_nhap" id="edit-gia_nhap">
-                            </div>                    
-                            <div class="mb-3">
-                                <label for="edit-gia" class="form-label">Giá</label>
-                                <input type="number" class="form-control" name="gia" id="edit-gia">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="edit-gia_nhap" class="form-label">Giá nhập</label>
+                                    <input type="number" class="form-control" name="gia_nhap" id="edit-gia_nhap">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit-gia" class="form-label">Giá</label>
+                                    <input type="number" class="form-control" name="gia" id="edit-gia">
+                                </div>
                             </div>
-
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="edit-soluong" class="form-label">Số lượng</label>
+                                    <input type="number" class="form-control" name="soluong" id="edit-soluong">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit-loaisanpham" class="form-label">Loại sản phẩm</label>
+                                    <select class="form-control" name="loaisanpham" id="edit-loaisanpham">
+                                        <option value="Nón Snapback">Nón Snapback</option>
+                                        <option value="Nón cao bồi">Nón cao bồi</option>
+                                        <option value="Nón len">Nón len</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="edit-noidungsanpham" class="form-label">Nội dung sản phẩm</label>
                                 <textarea class="form-control" name="noidungsanpham" id="edit-noidungsanpham"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-trangthai" class="form-label">Trạng thái</label>
+                                <select class="form-control" name="trangthai" id="edit-trangthai">
+                                    <option value="hienthi">Hiển thị</option>
+                                    <option value="an">Đang ẩn</option>
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -294,22 +350,26 @@ include 'config.php'; // Kết nối với database
 </html>
  <!-- chỗ này xử lý cập nhật thông tin-->
  <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const editButtons = document.querySelectorAll(".edit-btn");
+    document.addEventListener("DOMContentLoaded", function () {
+    const editButtons = document.querySelectorAll(".edit-btn");
 
-                editButtons.forEach(button => {
-                    button.addEventListener("click", function () {
-                        document.getElementById("edit-id").value = this.dataset.id;
-                        document.getElementById("edit-tensanpham").value = this.dataset.tensanpham;
-                        document.getElementById("current-img").src = this.dataset.img;
-                        document.getElementById("edit-gia_nhap").value = this.dataset.gia_nhap;
-                        document.getElementById("edit-gia").value = this.dataset.gia;
-                        document.getElementById("edit-noidungsanpham").value = this.dataset.noidungsanpham;
-                    });
-                });
-            });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    editButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            document.getElementById("edit-id").value = this.dataset.id;
+            document.getElementById("edit-tensanpham").value = this.dataset.tensanpham;
+            document.getElementById("current-img").src = this.dataset.img;
+            document.getElementById("edit-gia_nhap").value = this.dataset.gia_nhap;
+            document.getElementById("edit-gia").value = this.dataset.gia;
+            document.getElementById("edit-noidungsanpham").value = this.dataset.noidungsanpham;
+            document.getElementById("edit-trangthai").value = this.dataset.trangthai;
+            document.getElementById("edit-soluong").value = this.dataset.soluong;
+            document.getElementById("edit-loaisanpham").value = this.dataset.loaisanpham; 
+        });
+    });
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".delete-btn").forEach(button => {
