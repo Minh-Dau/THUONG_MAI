@@ -43,7 +43,6 @@
     <div class="headline">
         <h3>SẢN PHẨM MỚI NHẤT </h3>
     </div>
-
     <div class="wrapper">
         <div class="product">
         <?php

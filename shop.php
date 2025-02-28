@@ -44,31 +44,42 @@
         <div class="headline2"2>
             <h6>TẤT CẢ SẢN PHẨM</h6>
         </div>
-        <div class="wrapper">
-            <div class="product">
-            <?php
-                include("config.php");
-                $sql = "SELECT * FROM sanpham WHERE trangthai = 'hienthi'";
-                $result = mysqli_query($conn, $sql);
-                while ($row = mysqli_fetch_array($result)) {
-                ?> 
-                    <div class="product_item">
-                        <div class="product_top">
-                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_thumb">
-                                <img src="<?php echo $row['img'] ?>" alt="" width="250" height="250">
-                            </a>
-                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="buy_now">Mua ngay</a>
-                        </div>
-                        <div class="product_info">
-                            <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_cat"><?php echo $row['tensanpham'] ?></a>
-                            <div class="product_price"><?php echo $row['gia'] ?>$</div>
-                        </div>
-                    </div>
-                <?php 
-                } 
-                ?>
+        <?php
+        // tìm kiếm theo tên sản phẩm
+            include("config.php");
+            $search = isset($_GET['search']) ? trim($_GET['search']) : "";
+            $sql = "SELECT * FROM sanpham WHERE trangthai = 'hienthi'";
+            if (!empty($search)) {
+            $sql .= " AND (tensanpham LIKE '%$search%' OR loaisanpham LIKE '%$search%')";
+            }
+            $result = mysqli_query($conn, $sql);
+            ?>
+            <div class="wrapper">
+                <div class="product">
+                    <?php
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_array($result)) {
+                    ?>
+                            <div class="product_item">
+                                <div class="product_top">
+                                    <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_thumb">
+                                        <img src="<?php echo $row['img'] ?>" alt="" width="250" height="250">
+                                    </a>
+                                    <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="buy_now">Mua ngay</a>
+                                </div>
+                                <div class="product_info">
+                                    <a href="chitietsanpham.php?id=<?= $row['id'] ?>" class="product_cat"><?php echo $row['tensanpham'] ?></a>
+                                    <div class="product_price"><?php echo $row['gia'] ?>$</div>
+                                </div>
+                            </div>
+                    <?php 
+                        }
+                    } else {
+                        echo "<p>Không tìm thấy sản phẩm nào.</p>";
+                    }
+                    ?>
+                </div>
             </div>
-        </div>
     <div class="support">
         <p><i class="bi bi-telephone-fill"></i> Hỗ trợ - Mua hàng: <span style="color: rgb(201, 0, 0);"><b>0122112211</b></span></p>
     </div>
