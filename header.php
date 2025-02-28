@@ -29,7 +29,6 @@
     transition: all 0.3s ease-in-out;
     margin-right: 70px;
 }
-
 .search-box:focus {
     border-color: black;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
